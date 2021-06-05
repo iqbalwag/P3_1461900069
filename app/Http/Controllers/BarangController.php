@@ -1,101 +1,118 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
-class barangController extends Controller
+class BarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function tampilbarang()
     {
-        $barang = \App\Models\barang::All()->paginate(10);
-        return view('barang0069' , ['barang0069' => $barang]);
+        $barang = DB::table('barang')->paginate(10);
+        return view('barang0069',['barang' => $barang]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function tampilpelanggan()
     {
-        //
+        $pelanggan = DB::table('pelanggan')->get();
+        return view('pelanggan0069',['pelanggan' => $pelanggan]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function tampiltrans()
     {
-        //
+        $transaksi = DB::table('transaksi')->get();
+        return view('transaksi0069',['transaksi' => $transaksi]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function tampiluser()
     {
-        //
+        $user = DB::table('user')->get();
+        return view('user0069',['user' => $user]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function tambahbrg()
     {
-        
+	    return view('barang_tambah');
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function tambahplg()
     {
-        //
+	    return view('tambah_pelanggan');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function tambahtrans()
     {
-        //
+	    return view('tambah_transaksi');
     }
-
-    public function cari(Request $request)
+    public function tambahuser()
+    {
+	    return view('tambah_user');
+    }
+    public function storebrg(Request $request)
+    {
+	DB::table('barang')->insert([
+		'id' => $request->id,
+		'nama' => $request->nama,
+		'harga' => $request->harga,
+	]);
+	return redirect('/barang0069');
+    }
+    public function storeplg(Request $request)
+    {
+	DB::table('pelanggan')->insert([
+		'id' => $request->id,
+		'nama' => $request->nama,
+		'alamat' => $request->alamat,
+	]);
+	return redirect('/pelanggan');
+    }
+    public function storetrans(Request $request)
+    {
+	DB::table('transaksi')->insert([
+		'id' => $request->id,
+		'id_pelanggan' => $request->id_pelanggan,
+		'id_barang' => $request->id_barang,
+	]);
+	return redirect('/transaksi');
+    }
+    public function storeusr(Request $request)
+    {
+	DB::table('barang')->insert([
+		'id' => $request->id,
+		'nama' => $request->nama,
+		'username' => $request->username,
+        'password' => $request->password,
+	]);
+	return redirect('/user');
+    }
+public function editbrg($id)
+{
+	$barang = DB::table('barang')->where('id',$id)->get();
+	return view('barang_edit',['barang' => $barang]);
+}
+public function updatebrg(Request $request)
+{
+	DB::table('barang')->where('id',$request->id)->update([
+		'id' => $request->id,
+		'nama' => $request->nama,
+		'harga' => $request->harga,
+	]);
+	return redirect('/barang0069');
+}
+public function deletebrg($id)
+{
+	// menghapus data pegawai berdasarkan id yang dipilih
+	DB::table('barang')->where('id',$id)->delete();
+		
+	// alihkan halaman ke halaman pegawai
+	return redirect('/barang0069');
+}
+public function cari(Request $request)
 	{
 		// menangkap data pencarian
 		$cari = $request->cari;
  
     		// mengambil data dari table pegawai sesuai pencarian data
-		$barang = DB::table('barang')
+		$pegawai = DB::table('barang')
 		->where('nama','like',"%".$cari."%")
 		->paginate();
  
     		// mengirim data pegawai ke view index
-		return view('barang0069',['barang' => $barang]);
-
+		return view('barang0069',['barang' => $pegawai]);
+ 
 	}
 }
